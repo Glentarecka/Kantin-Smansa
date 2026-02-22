@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kantin SMA - Pesan Makanan Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .role-selector {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .menu-card {
+            background: #f7fafc;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            border: 2px solid #e2e8f0;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .menu-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+        }
+
+        .menu-content {
+            padding: 20px;
+        }
+
+        .menu-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .menu-price {
+            color: #667eea;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .menu-desc {
+            color: #718096;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .menu-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9em;
+            border-radius: 20px;
+        }
+
+        .btn-edit {
+            background: #ed8936;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background: #f56565;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-order {
+            background: #48bb78;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .cart-item {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-list {
+            margin-top: 20px;
+        }
+
+        .order-card {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .order-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-process {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .status-done {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .chat-box {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #a0aec0;
+        }
+
+        .back-btn {
+            background: #718096;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #48bb78;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+        }
+
+        .time-estimate {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: bold;
+            color: #92400e;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .qty-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Login Styles */
+        .login-box {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .login-icon {
+            font-size: 4em;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .password-hint {
+            text-align: center;
+            color: #a0aec0;
+            font-size: 0.85em;
+            margin-top: 15px;
+        }
+
+        .seller-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-bottom: 15px;
+        }
+
+        .logout-btn {
+            background: #f56565;
+            color: white;
+            float: right;
+            padding: 8px 20px;
+            font-size: 0.9em;
+        }
+
+        .wrong-password {
+            color: #f56565;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8em; }
+            .menu-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>🍽️ Kantin SMA</h1>
+            <p class="subtitle">Pesan makanan favoritmu tanpa antri!</p>
+            <div class="role-selector" id="mainMenu">
+                <button class="btn btn-primary" onclick="showSection('buyer')">👤 Saya Pembeli</button>
+                <button class="btn btn-secondary" onclick="showSection('login')">🍳 Saya Penjual</button>
+            </div>
+        </header>
+
+        <!-- SECTION: LOGIN (Keamanan Penjual) -->
+        <div id="login" class="section">
+            <button class="btn back-btn" onclick="backToMain()">← Kembali</button>
+            
+            <div class="login-box">
+                <div class="login-icon">🔐</div>
+                <h2 class="login-title">Login Penjual</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                    Area khusus penjual kantin.<br>Masukkan password untuk melanjutkan.
+                </p>
+                
+                <form id="loginForm" onsubmit="return doLogin(event)">
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="sellerPassword" required placeholder="Masukkan password..." autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">🔓 Masuk</button>
+                    <div id="loginError" class="wrong-password hidden">❌ Password salah!</div>
+                </form>
+                
+                <div class="password-hint">
+                    💡 Lupa password? Hubungi admin website.<br>
+                    <small>(Password default: kantinsma2024)</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: SELLER (Setelah Login) -->
+        <div id="seller" class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <span class="seller-badge">👨‍🍳 MODE PENJUAL</span>
+                    <h2 style="display: inline;">Dashboard</h2>
+                </div>
+                <button class="btn logout-btn" onclick="doLogout()">🚪 Logout</button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalMenu">0</div>
+                    <div>Menu</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalOrders">0</div>
+                    <div>Pesanan Hari Ini</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingOrders">0</div>
+                    <div>Menunggu</div>
+                </div>
+            </div>
+
+            <!-- Tambah Menu -->
+            <div style="background: #f7fafc; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                <h3>Tambah/Edit Menu</h3>
+                <form id="menuForm">
+                    <input type="hidden" id="editId">
+                    <div class="form-group">
+                        <label>Nama Makanan</label>
+                        <input type="text" id="foodName" required placeholder="Contoh: Nasi Goreng">
+                    </div>
+                    <div class="form-group">
+                        <label>Harga (Rp)</label>
+                        <input type="number" id="foodPrice" required placeholder="Contoh: 15000">
+                    </div>
+                    <div class="form-group">
+                        <label>Deskripsi</label>
+                        <textarea id="foodDesc" rows="2" placeholder="Contoh: Nasi goreng spesial dengan telur"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Estimasi Waktu (menit)</label>
+                        <input type="number" id="foodTime" required placeholder="Contoh: 10" min="1">
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="btnSave">💾 Simpan Menu</button>
+                    <button type="button" class="btn btn-secondary hidden" id="btnCancel" onclick="cancelEdit()">❌ Batal</button>
+                </form>
+            </div>
+
+            <!-- Daftar Menu -->
+            <h3>📋 Katalog Menu</h3>
+            <div id="sellerMenuList" class="menu-grid">
+                <div class="empty-state">Belum ada menu. Tambahkan menu pertama!</div>
+            </div>
+
+            <!-- Daftar Pesanan -->
+            <h3 style="margin-top: 30px;">📦 Pesanan Masuk</h3>
+            <div id="orderList" class="order-list">
+                <div class="empty-state">Belum ada pesanan</div>
+            </div>
+        </div>
+
+        <!-- SECTION: BUYER (Pembeli) -->
+        <div id="buyer" class="section">
+            <button class="btn back-btn" onclick="backToMain()">← Kembali</button>
+            
+            <!-- Form Pemesanan -->
+            <div id="orderForm">
+                <h2>🛒 Pesan Makanan</h2>
+                <div class="form-group">
+                    <label>Nama Pemesan</label>
+                    <input type="text" id="buyerName" required placeholder="Nama kamu">
+                </div>
+                <div class="form-group">
+                    <label>Kelas/Lokasi</label>
+                    <input type="text" id="buyerClass" required placeholder="Contoh: Kelas 10A / Perpustakaan">
+                </div>
+
+                <h3 style="margin-top: 20px;">📋 Menu Tersedia</h3>
+                <div id="buyerMenuList" class="menu-grid">
+                    <div class="empty-state">Belum ada menu tersedia</div>
+                </div>
+
+                <!-- Keranjang -->
+                <div id="cartSection" style="margin-top: 30px; display: none;">
+                    <h3>🛍️ Pesanan Kamu</h3>
+                    <div id="cartItems"></div>
+                    <div style="background: #667eea; color: white; padding: 15px; border-radius: 10px; margin-top: 15px; text-align: center;">
+                        <strong>Total: Rp <span id="cartTotal">0</span></strong>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="submitOrder()">
+                        📱 Pesan via WhatsApp
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tracking Pesanan -->
+            <div id="trackingSection" style="display: none; margin-top: 30px;">
+                <h3>⏱️ Status Pesanan</h3>
+                <div id="myOrders"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // KONFIGURASI KEAMANAN - GANTI PASSWORD DI SINI
+        const SELLER_PASSWORD = 'kantinsma2024'; // 🔐 GANTI PASSWORD INI!
+        
+        // Data Storage
+        let menuData = JSON.parse(localStorage.getItem('kantin_menu')) || [];
+        let ordersData = JSON.parse(localStorage.getItem('kantin_orders')) || [];
+        let cart = [];
+        let currentBuyer = '';
+        let isSellerLoggedIn = sessionStorage.getItem('seller_logged_in') === 'true';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cek status login saat load
+            if (window.location.hash === '#seller' && isSellerLoggedIn) {
+                showSection('seller');
+            }
+        });
+
+        // Navigation
+        function showSection(section) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(section).classList.add('active');
+            document.getElementById('mainMenu').style.display = 'none';
+            
+            if (section === 'seller') {
+                if (!isSellerLoggedIn) {
+                    // Jika belum login, redirect ke login
+                    document.getElementById('seller').classList.remove('active');
+                    document.getElementById('login').classList.add('active');
+                    return;
+                }
+                updateSellerView();
+            } else if (section === 'login') {
+                // Reset form login
+                document.getElementById('loginForm').reset();
+                document.getElementById('loginError').classList.add('hidden');
+            } else if (section === 'buyer') {
+                updateBuyerView();
+            }
+        }
+
+        function backToMain() {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('mainMenu').style.display = 'flex';
+            cart = [];
+            updateCart();
+        }
+
+        // LOGIN SYSTEM
+        function doLogin(e) {
+            e.preventDefault();
+            const input = document.getElementById('sellerPassword').value;
+            
+            if (input === SELLER_PASSWORD) {
+                // Password benar
+                isSellerLoggedIn = true;
+                sessionStorage.setItem('seller_logged_in', 'true');
+                document.getElementById('loginError').classList.add('hidden');
+                
+                showNotif('✅ Login berhasil! Selamat datang, Penjual.');
+                
+                // Redirect ke dashboard seller
+                setTimeout(() => {
+                    document.getElementById('login').classList.remove('active');
+                    document.getElementById('seller').classList.add('active');
+                    updateSellerView();
+                }, 500);
+            } else {
+                // Password salah
+                document.getElementById('loginError').classList.remove('hidden');
+                document.getElementById('sellerPassword').value = '';
+                document.getElementById('sellerPassword').focus();
+            }
+            return false;
+        }
+
+        function doLogout() {
+            if (confirm('Yakin ingin logout?')) {
+                isSellerLoggedIn = false;
+                sessionStorage.removeItem('seller_logged_in');
+                showNotif('👋 Logout berhasil!');
+                setTimeout(() => {
+                    backToMain();
+                }, 500);
+            }
+        }
+
+        // Proteksi jika user coba akses langsung via URL hash
+        window.addEventListener('hashchange', function() {
+            if (window.location.hash === '#seller' && !isSellerLoggedIn) {
+                window.location.hash = '';
+                showSection('login');
+            }
+        });
+
+        // SELLER FUNCTIONS
+        document.getElementById('menuForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('editId').value;
+            const menu = {
+                id: id || Date.now(),
+                name: document.getElementById('foodName').value,
+                price: parseInt(document.getElementById('foodPrice').value),
+                desc: document.getElementById('foodDesc').value,
+                time: parseInt(document.getElementById('foodTime').value)
+            };
+
+            if (id) {
+                const index = menuData.findIndex(m => m.id == id);
+                menuData[index] = menu;
+                showNotif('Menu berhasil diupdate!');
+            } else {
+                menuData.push(menu);
+                showNotif('Menu berhasil ditambahkan!');
+            }
+
+            localStorage.setItem('kantin_menu', JSON.stringify(menuData));
+            resetForm();
+            updateSellerView();
+            updateStats();
+        });
+
+        function editMenu(id) {
+            const menu = menuData.find(m => m.id == id);
+            document.getElementById('editId').value = menu.id;
+            document.getElementById('foodName').value = menu.name;
+            document.getElementById('foodPrice').value = menu.price;
+            document.getElementById('foodDesc').value = menu.desc;
+            document.getElementById('foodTime').value = menu.time;
+            document.getElementById('btnSave').textContent = '💾 Update Menu';
+            document.getElementById('btnCancel').classList.remove('hidden');
+        }
+
+        function deleteMenu(id) {
+            if (confirm('Yakin hapus menu ini?')) {
+                menuData = menuData.filter(m => m.id != id);
+                localStorage.setItem('kantin_menu', JSON.stringify(menuData));
+                updateSellerView();
+                updateStats();
+                showNotif('Menu dihapus!');
+            }
+        }
+
+        function cancelEdit() {
+            resetForm();
+        }
+
+        function resetForm() {
+            document.getElementById('menuForm').reset();
+            document.getElementById('editId').value = '';
+            document.getElementById('btnSave').textContent = '💾 Simpan Menu';
+            document.getElementById('btnCancel').classList.add('hidden');
+        }
+
+        function updateSellerView() {
+            const container = document.getElementById('sellerMenuList');
+            
+            if (menuData.length === 0) {
+                container.innerHTML = '<div class="empty-state">Belum ada menu. Tambahkan menu pertama!</div>';
+            } else {
+                container.innerHTML = menuData.map(menu => `
+                    <div class="menu-card">
+                        <div class="menu-image">🍽️</div>
+                        <div class="menu-content">
+                            <div class="menu-name">${menu.name}</div>
+                            <div class="menu-price">Rp ${menu.price.toLocaleString()}</div>
+                            <div class="menu-desc">${menu.desc}</div>
+                            <div style="color: #666; font-size: 0.9em; margin-bottom: 10px;">
+                                ⏱️ ${menu.time} menit
+                            </div>
+                            <div class="menu-actions">
+                                <button class="btn-small btn-edit" onclick="editMenu(${menu.id})">✏️ Edit</button>
+                                <button class="btn-small btn-delete" onclick="deleteMenu(${menu.id})">🗑️ Hapus</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateOrderList();
+        }
+
+        function updateOrderList() {
+            const container = document.getElementById('orderList');
+            const pendingOrders = ordersData.filter(o => o.status !== 'done');
+            
+            if (pendingOrders.length === 0) {
+                container.innerHTML = '<div class="empty-state">Belum ada pesanan</div>';
+            } else {
+                container.innerHTML = pendingOrders.map(order => `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <strong>${order.buyer}</strong> (${order.class})<br>
+                                <small>${order.time}</small>
+                            </div>
+                            <span class="order-status status-${order.status}">${getStatusText(order.status)}</span>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            ${order.items.map(item => `
+                                <div>• ${item.name} x${item.qty} = Rp ${(item.price * item.qty).toLocaleString()}</div>
+                            `).join('')}
+                        </div>
+                        <div style="font-weight: bold; color: #667eea;">
+                            Total: Rp ${order.total.toLocaleString()}
+                        </div>
+                        <div style="margin-top: 10px; display: flex; gap: 10px;">
+                            ${order.status === 'pending' ? `
+                                <button class="btn btn-primary btn-small" onclick="updateStatus('${order.id}', 'process')">✅ Terima & Proses</button>
+                            ` : ''}
+                            ${order.status === 'process' ? `
+                                <button class="btn btn-secondary btn-small" onclick="updateStatus('${order.id}', 'done')">🚚 Selesai & Antar</button>
+                            ` : ''}
+                            <a href="https://wa.me/${order.wa}?text=${encodeURIComponent('Halo ' + order.buyer + ', pesanan kamu sedang ' + getStatusText(order.status))}" 
+                               target="_blank" class="btn btn-secondary btn-small">💬 Chat</a>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function updateStatus(orderId, status) {
+            const order = ordersData.find(o => o.id === orderId);
+            order.status = status;
+            localStorage.setItem('kantin_orders', JSON.stringify(ordersData));
+            updateOrderList();
+            updateStats();
+            showNotif('Status pesanan diupdate!');
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                'pending': 'Menunggu Konfirmasi',
+                'process': 'Sedang Diproses',
+                'done': 'Selesai'
+            };
+            return texts[status] || status;
+        }
+
+        function updateStats() {
+            document.getElementById('totalMenu').textContent = menuData.length;
+            document.getElementById('totalOrders').textContent = ordersData.filter(o => {
+                const today = new Date().toDateString();
+                return new Date(o.timestamp).toDateString() === today;
+            }).length;
+            document.getElementById('pendingOrders').textContent = ordersData.filter(o => o.status === 'pending').length;
+        }
+
+        // BUYER FUNCTIONS
+        function updateBuyerView() {
+            const container = document.getElementById('buyerMenuList');
+            
+            if (menuData.length === 0) {
+                container.innerHTML = '<div class="empty-state">Belum ada menu tersedia. Tunggu penjual menambahkan menu ya!</div>';
+            } else {
+                container.innerHTML = menuData.map(menu => {
+                    const inCart = cart.find(c => c.id === menu.id);
+                    return `
+                    <div class="menu-card">
+                        <div class="menu-image">🍽️</div>
+                        <div class="menu-content">
+                            <div class="menu-name">${menu.name}</div>
+                            <div class="menu-price">Rp ${menu.price.toLocaleString()}</div>
+                            <div class="menu-desc">${menu.desc}</div>
+                            <div style="color: #666; font-size: 0.9em; margin-bottom: 10px;">
+                                ⏱️ Siap dalam ${menu.time} menit
+                            </div>
+                            ${inCart ? `
+                                <div class="quantity-control">
+                                    <button class="qty-btn" onclick="updateQty(${menu.id}, -1)">-</button>
+                                    <span>${inCart.qty}</span>
+                                    <button class="qty-btn" onclick="updateQty(${menu.id}, 1)">+</button>
+                                </div>
+                            ` : `
+                                <button class="btn-order" onclick="addToCart(${menu.id})">🛒 Tambah</button>
+                            `}
+                        </div>
+                    </div>
+                `}).join('');
+            }
+        }
+
+        function addToCart(menuId) {
+            const menu = menuData.find(m => m.id === menuId);
+            cart.push({ ...menu, qty: 1 });
+            updateBuyerView();
+            updateCart();
+        }
+
+        function updateQty(menuId, change) {
+            const item = cart.find(c => c.id === menuId);
+            item.qty += change;
+            if (item.qty <= 0) {
+                cart = cart.filter(c => c.id !== menuId);
+            }
+            updateBuyerView();
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartSection = document.getElementById('cartSection');
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            if (cart.length === 0) {
+                cartSection.style.display = 'none';
+            } else {
+                cartSection.style.display = 'block';
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div>
+                            <strong>${item.name}</strong><br>
+                            <small>Rp ${item.price.toLocaleString()} x ${item.qty}</small>
+                        </div>
+                        <div style="font-weight: bold;">
+                            Rp ${(item.price * item.qty).toLocaleString()}
+                        </div>
+                    </div>
+                `).join('');
+                
+                const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+                cartTotal.textContent = total.toLocaleString();
+            }
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('buyerName').value.trim();
+            const cls = document.getElementById('buyerClass').value.trim();
+            
+            if (!name || !cls) {
+                alert('Isi nama dan kelas/lokasi dulu ya!');
+                return;
+            }
+            
+            if (cart.length === 0) {
+                alert('Pilih makanan dulu!');
+                return;
+            }
+
+            currentBuyer = name;
+            
+            // Hitung estimasi waktu (waktu terlama dari menu yang dipesan)
+            const maxTime = Math.max(...cart.map(item => item.time));
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            
+            const order = {
+                id: Date.now().toString(),
+                buyer: name,
+                class: cls,
+                items: [...cart],
+                total: total,
+                status: 'pending',
+                time: new Date().toLocaleString('id-ID'),
+                timestamp: Date.now(),
+                wa: '6281234567890' // GANTI NOMOR WA PENJUAL
+            };
+
+            ordersData.push(order);
+            localStorage.setItem('kantin_orders', JSON.stringify(ordersData));
+
+            // Buat pesan WhatsApp
+            let waMessage = `*PESANAN BARU - KANTIN SMA*\n\n`;
+            waMessage += `Nama: ${name}\n`;
+            waMessage += `Kelas/Lokasi: ${cls}\n\n`;
+            waMessage += `*Pesanan:*\n`;
+            cart.forEach(item => {
+                waMessage += `• ${item.name} x${item.qty} = Rp ${(item.price * item.qty).toLocaleString()}\n`;
+            });
+            waMessage += `\n*Total: Rp ${total.toLocaleString()}*\n`;
+            waMessage += `*Estimasi siap: ${maxTime} menit*\n\n`;
+            waMessage += `Terima kasih! 🙏`;
+
+            const waUrl = `https://wa.me/${order.wa}?text=${encodeURIComponent(waMessage)}`;
+            window.open(waUrl, '_blank');
+
+            // Tampilkan tracking
+            document.getElementById('orderForm').style.display = 'none';
+            document.getElementById('trackingSection').style.display = 'block';
+            updateMyOrders();
+            
+            cart = [];
+            updateCart();
+            showNotif('Pesanan berhasil dikirim!');
+        }
+
+        function updateMyOrders() {
+            const container = document.getElementById('myOrders');
+            const myOrders = ordersData.filter(o => o.buyer === currentBuyer).reverse();
+            
+            if (myOrders.length === 0) {
+                container.innerHTML = '<div class="empty-state">Belum ada pesanan</div>';
+            } else {
+                container.innerHTML = myOrders.map(order => `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <strong>Pesanan ${order.time}</strong><br>
+                                <span class="order-status status-${order.status}">${getStatusText(order.status)}</span>
+                            </div>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            ${order.items.map(item => `
+                                <div>• ${item.name} x${item.qty}</div>
+                            `).join('')}
+                        </div>
+                        <div class="time-estimate">
+                            ⏱️ Estimasi: ${Math.max(...order.items.map(i => i.time))} menit
+                        </div>
+                        <a href="https://wa.me/${order.wa}?text=${encodeURIComponent('Halo, saya ' + order.buyer + ' mau tanya pesanan saya')}" 
+                           target="_blank" class="btn btn-primary" style="display: block; text-align: center; text-decoration: none;">
+                           💬 Chat Penjual
+                        </a>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function showNotif(message) {
+            const notif = document.getElementById('notification');
+            notif.textContent = message;
+            notif.style.display = 'block';
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 3000);
+        }
+
+        // Auto refresh untuk penjual
+        setInterval(() => {
+            if (document.getElementById('seller').classList.contains('active')) {
+                ordersData = JSON.parse(localStorage.getItem('kantin_orders')) || [];
+                updateOrderList();
+                updateStats();
+            }
+            if (document.getElementById('buyer').classList.contains('active') && currentBuyer) {
+                ordersData = JSON.parse(localStorage.getItem('kantin_orders')) || [];
+                updateMyOrders();
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
